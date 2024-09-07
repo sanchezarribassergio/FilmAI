@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FilmAI Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="logo">
+            <h1>FilmAI</h1>
+        </div>
+        <div id="chat-box" class="chat-box">
+            <div class="chat-message">
+                <span class="assistant">¡Hola! Soy FilmAI, tu asistente de películas. ¿En qué puedo ayudarte hoy?</span>
+            </div>
+        </div>
+        <div class="input-box">
+            <input type="text" id="user-input" placeholder="Escribe tu mensaje aquí...">
+            <button id="send-btn">Enviar</button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#send-btn').click(function() {
+                var userInput = $('#user-input').val();
+                if (userInput.trim() !== '') {
+                    $('#chat-box').append('<div class="chat-message"><span class="user">' + userInput + '</span></div>');
+                    $('#user-input').val('');
+
+                    $.post('/get_response', { msg: userInput }, function(data) {
+                        $('#chat-box').append('<div class="chat-message"><span class="assistant">' + data.respuesta + '</span></div>');
+                        $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight);
+                    });
+                }
+            });
+
+            $('#user-input').keypress(function(e) {
+                if (e.which == 13) {
+                    $('#send-btn').click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
